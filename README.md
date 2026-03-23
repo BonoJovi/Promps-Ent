@@ -5,7 +5,7 @@
 > **A Visual Block-Based Tool for Creating Structured AI Prompts**
 > **AIプロンプト作成のためのビジュアルブロックベースツール**
 
-[![Version](https://img.shields.io/badge/Version-2.1.0-blue)](https://github.com/BonoJovi/Promps-Ent/releases)
+[![Version](https://img.shields.io/badge/Version-3.0.0-blue)](https://github.com/BonoJovi/Promps-Ent/releases)
 [![Tests](https://img.shields.io/badge/Tests-880%20passing-brightgreen)](https://github.com/BonoJovi/Promps-Ent)
 [![Rust](https://img.shields.io/badge/Rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![Tauri](https://img.shields.io/badge/Tauri-v2-blue.svg)](https://tauri.app/)
