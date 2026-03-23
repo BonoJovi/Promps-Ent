@@ -267,7 +267,7 @@ const TRANSLATIONS = {
         'project.load.failed': 'プロジェクトの読み込みに失敗しました',
 
         // Footer
-        'footer.version': 'Promps Ent v2.1.0 - Wizard',
+        'footer.version': 'Promps v3.0.0',
 
         // Pro Features - Toolbar
         'pro.toolbar.undo': '元に戻す',
@@ -792,7 +792,7 @@ const TRANSLATIONS = {
         'project.load.failed': 'Failed to load project',
 
         // Footer
-        'footer.version': 'Promps Ent v2.1.0 - Wizard',
+        'footer.version': 'Promps v3.0.0',
 
         // Pro Features - Toolbar
         'pro.toolbar.undo': 'Undo',
@@ -1317,7 +1317,7 @@ const TRANSLATIONS = {
         'project.load.failed': 'Échec du chargement du projet',
 
         // Footer
-        'footer.version': 'Promps Ent v2.1.0 - Wizard',
+        'footer.version': 'Promps v3.0.0',
 
         // Pro Features - Toolbar
         'pro.toolbar.undo': 'Annuler',

@@ -117,7 +117,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: `v${process.env.PACKAGE_VERSION}`,
-              name: `Promps Ent v${process.env.PACKAGE_VERSION}`,
+              name: `Promps v${process.env.PACKAGE_VERSION}`,
               body: releaseNotes,
               draft: true,
               prerelease: false

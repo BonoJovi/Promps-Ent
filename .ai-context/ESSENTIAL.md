@@ -9,7 +9,7 @@
 
 ## Current Status
 
-**Version**: v2.1.0 (Stable Release, Open Source)
+**Version**: v3.0.0 (Stable Release, Open Source)
 **Phase**: All phases complete - Wizard Template + Custom Wizard
 **Tests**: 880 tests at 100% passing (Backend 255 + Frontend 625)
 **Branch**: dev (default development branch), main (release branch)
