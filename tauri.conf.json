@@ -1,0 +1,43 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Promps",
+  "version": "2.1.0",
+  "identifier": "org.zundou.promps-ent",
+  "build": {
+    "beforeDevCommand": "",
+    "beforeBuildCommand": "",
+    "frontendDist": "res"
+  },
+  "bundle": {
+    "active": true,
+    "category": "DeveloperTool",
+    "copyright": "Copyright (c) 2025-2026 Yoshihiro NAKAHARA",
+    "shortDescription": "Visual Prompt Builder",
+    "longDescription": "A visual block-based tool for creating structured AI prompts with direct AI integration",
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Promps - Visual Prompt Builder",
+        "width": 1920,
+        "height": 1000,
+        "minWidth": 800,
+        "minHeight": 600,
+        "resizable": true,
+        "fullscreen": false,
+        "devtools": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  }
+}

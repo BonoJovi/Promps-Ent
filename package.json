@@ -1,0 +1,35 @@
+{
+  "name": "promps",
+  "version": "2.1.0",
+  "description": "Promps: A ViPL (Visual Prompt Language) generation tool",
+  "author": "Yoshihiro NAKAHARA <promps-dev@zundou.org>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BonoJovi/Promps"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "@tauri-apps/cli": "^2.10.1",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "testMatch": [
+      "**/res/tests/**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "res/js/**/*.js",
+      "!res/js/**/*.test.js"
+    ],
+    "transform": {}
+  }
+}

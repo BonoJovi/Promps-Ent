@@ -1,0 +1,33 @@
+# Rust
+/target/
+**/*.rs.bk
+*.pdb
+Cargo.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+/work/
+*.db
+*.sqlite
+*.sqlite3
+
+# Node (if using for frontend)
+/node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-lock.yaml
+pnpm-workspace.yaml
+
+# Build artifacts
+/dist/
+/build/

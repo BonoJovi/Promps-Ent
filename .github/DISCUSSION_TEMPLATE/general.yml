@@ -1,0 +1,46 @@
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # 🗣️ 一般的な議論
+
+        Prompsプロジェクトに関する一般的なトピックについて話し合いましょう！
+
+        以下のような投稿を歓迎します：
+        - 使用事例の共有
+        - Tips & Tricksの紹介
+        - フィードバック
+        - コミュニティとの交流
+
+  - type: textarea
+    id: content
+    attributes:
+      label: 内容
+      description: 話題の内容を自由に記載してください
+      placeholder: |
+        例）
+        Prompsを使って技術ブログの執筆補助プロンプトを作成しました。
+        ブロックの組み合わせ方を共有します...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: topic-type
+    attributes:
+      label: トピックの種類
+      options:
+        - 使用事例の共有
+        - Tips & Tricks
+        - フィードバック
+        - 雑談・交流
+        - その他
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 追加情報
+      description: スクリーンショット、リンク、その他関連情報
+      placeholder: 画像やリンクなど

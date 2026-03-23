@@ -1,0 +1,78 @@
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # 💡 新しいアイデアの提案
+
+        Prompsの改善アイデアを共有してください！
+
+        提案する前に、既存のディスカッションやIssueで同様のアイデアがないか確認してください。
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+      description: アイデアの概要を簡潔に説明してください
+      placeholder: 例）ブロックのグループ化機能を追加したい
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: ユースケース
+      description: このアイデアがどのような場面で役立つか説明してください
+      placeholder: |
+        例）
+        複数のブロックを論理的にグループ化して管理したい。
+        現在は個別のブロックしか扱えないため、複雑なプロンプトの構造化が難しい。
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-benefit
+    attributes:
+      label: 期待される効果
+      description: この機能が実装されると、どのような利点があるか説明してください
+      placeholder: |
+        例）
+        - 複雑なプロンプトの可読性向上
+        - ブロックの再利用性向上
+        - プロンプト構造の視覚化
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: 提案する実装方法（任意）
+      description: 具体的な実装アイデアがあれば記載してください
+      placeholder: |
+        例）
+        - UIに「グループブロック」を追加
+        - グループ内にブロックをドラッグ&ドロップ
+        - グループの展開/折りたたみ機能
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 代替案（任意）
+      description: 他に考えられる方法があれば記載してください
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 追加情報
+      description: スクリーンショット、参考リンク、その他関連情報
+      placeholder: スクリーンショットや参考になるリンクなど
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: 確認事項
+      options:
+        - label: 既存のディスカッション/Issueを検索し、重複がないことを確認しました
+          required: true
+        - label: この提案はPrompsの目的（日本語DSL→自然言語プロンプト変換）に沿っています
+          required: true

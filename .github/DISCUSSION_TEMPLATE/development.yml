@@ -1,0 +1,93 @@
+labels: ["development"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # 🛠️ 開発に関する議論
+
+        Prompsの開発に関する技術的な議論をしましょう。
+
+        対象：
+        - 実装方針の相談
+        - アーキテクチャの議論
+        - 設計判断の共有
+        - コードレビューの事前相談
+
+  - type: textarea
+    id: topic
+    attributes:
+      label: 議論したいトピック
+      description: 議論したい内容のタイトルと概要
+      placeholder: 例）Phase Nのパターンマッチング実装方法について
+    validations:
+      required: true
+
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景・コンテキスト
+      description: この議論が必要な背景を説明してください
+      placeholder: |
+        例）
+        Phase Nでは、助詞パターンのバリデーションを実装する必要があります。
+        日本語の語順の柔軟性を考慮すると、複数のアプローチが考えられます。
+    validations:
+      required: true
+
+  - type: textarea
+    id: options
+    attributes:
+      label: 検討している選択肢
+      description: 考えられる実装方法や選択肢を列挙してください
+      placeholder: |
+        ## 選択肢A: 正規表現ベース
+        - メリット: シンプル、軽量
+        - デメリット: 複雑なパターンに対応しづらい
+
+        ## 選択肢B: ASTベースのパターンマッチング
+        - メリット: 柔軟性が高い、拡張しやすい
+        - デメリット: 実装コストが高い
+    validations:
+      required: false
+
+  - type: textarea
+    id: concerns
+    attributes:
+      label: 懸念点・意見を求めたい点
+      description: 特に意見を求めたい点や懸念事項
+      placeholder: |
+        例）
+        - パフォーマンスとメンテナンス性のトレードオフ
+        - Phase N以降の拡張性
+        - テストの書きやすさ
+    validations:
+      required: false
+
+  - type: textarea
+    id: code-reference
+    attributes:
+      label: 関連するコード・ドキュメント
+      description: 関連するファイルパスやドキュメントへの参照
+      placeholder: |
+        - `src/lib.rs:parse_input()`
+        - `.ai-context/core/DESIGN_PHILOSOPHY.md`
+        - Phase 0実装（参考）
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 追加情報
+      description: コードスニペット、図、その他関連情報
+      placeholder: コード例やアーキテクチャ図など
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: 確認事項
+      options:
+        - label: 既存の設計ドキュメント（.ai-contextなど）を確認しました
+          required: true
+        - label: この議論は実装に関する技術的なトピックです
+          required: true

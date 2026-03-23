@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Untitled - Promps</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/sharing.css">
+
+    <!-- Blockly.js -->
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+
+    <!-- i18n (internationalization) -->
+    <script src="js/i18n.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <h1>Promps</h1>
+                    <p class="subtitle" data-i18n="app.subtitle">Visual Prompt Language Generator</p>
+                </div>
+                <!-- Edit Toolbar (Undo/Redo) -->
+                <div class="toolbar toolbar-edit">
+                    <button id="btnUndo" class="toolbar-btn" title="Undo (Ctrl+Z)" disabled>
+                        <span class="toolbar-icon">&#8617;</span>
+                        <span class="toolbar-label" data-i18n="pro.toolbar.undo">Undo</span>
+                    </button>
+                    <button id="btnRedo" class="toolbar-btn" title="Redo (Ctrl+Y)" disabled>
+                        <span class="toolbar-icon">&#8618;</span>
+                        <span class="toolbar-label" data-i18n="pro.toolbar.redo">Redo</span>
+                    </button>
+                </div>
+                <!-- File Toolbar -->
+                <div class="toolbar toolbar-file">
+                    <button id="btnNew" class="toolbar-btn" data-i18n-title="toolbar.new.title" title="New Project (Ctrl+N)">
+                        <span class="toolbar-icon">+</span>
+                        <span class="toolbar-label" data-i18n="toolbar.new">New</span>
+                    </button>
+                    <button id="btnOpen" class="toolbar-btn" data-i18n-title="toolbar.open.title" title="Open Project (Ctrl+O)">
+                        <span class="toolbar-icon">&#128194;</span>
+                        <span class="toolbar-label" data-i18n="toolbar.open">Open</span>
+                    </button>
+                    <button id="btnSave" class="toolbar-btn" data-i18n-title="toolbar.save.title" title="Save Project (Ctrl+S)">
+                        <span class="toolbar-icon">&#128190;</span>
+                        <span class="toolbar-label" data-i18n="toolbar.save">Save</span>
+                    </button>
+                    <button id="btnSaveAs" class="toolbar-btn" data-i18n-title="toolbar.saveAs.title" title="Save As (Ctrl+Shift+S)">
+                        <span class="toolbar-icon">&#128190;</span>
+                        <span class="toolbar-label" data-i18n="toolbar.saveAs">Save As</span>
+                    </button>
+                    <button id="btnExport" class="toolbar-btn" title="Export (Ctrl+E)">
+                        <span class="toolbar-icon">&#128230;</span>
+                        <span class="toolbar-label" data-i18n="toolbar.export">Export</span>
+                    </button>
+                    <button id="btnBlockFavorites" class="toolbar-btn" title="Block Favorites (Ctrl+B)">
+                        <span class="toolbar-icon">★</span>
+                        <span class="toolbar-label" data-i18n="toolbar.blockFavorites">Blocks</span>
+                    </button>
+                    <button id="btnQrShare" class="toolbar-btn" title="QR Share">
+                        <span class="toolbar-icon">&#9638;</span>
+                        <span class="toolbar-label" data-i18n="toolbar.qrShare">QR</span>
+                    </button>
+                    <button id="btnLanShare" class="toolbar-btn" title="LAN Share">
+                        <span class="toolbar-icon">&#128279;</span>
+                        <span class="toolbar-label" data-i18n="toolbar.lanShare">LAN</span>
+                    </button>
+                    <button id="btnWizard" class="toolbar-btn" title="Wizard">
+                        <span class="toolbar-icon">&#129497;</span>
+                        <span class="toolbar-label" data-i18n="toolbar.wizard">Wizard</span>
+                    </button>
+                    <div class="toolbar-separator"></div>
+                    <button id="btnTheme" class="toolbar-btn" title="Switch to Dark Mode">
+                        <span class="toolbar-icon">☀️</span>
+                        <span class="toolbar-label" data-i18n="toolbar.theme">Theme</span>
+                    </button>
+                    <button id="btnColorTheme" class="toolbar-btn" title="Color Theme Settings">
+                        <span class="toolbar-icon">🎨</span>
+                        <span class="toolbar-label" data-i18n="colorTheme.colors">Colors</span>
+                    </button>
+                    <button id="btnSettings" class="toolbar-btn" title="API Key Settings">
+                        <span class="toolbar-icon">&#9881;</span>
+                        <span class="toolbar-label" data-i18n="pro.toolbar.settings">Settings</span>
+                    </button>
+                    <div class="toolbar-separator"></div>
+                    <button id="btnLang" class="toolbar-btn toolbar-btn-lang" data-i18n-title="toolbar.lang.title" title="Switch to English">
+                        <span class="toolbar-icon">&#127760;</span>
+                        <span class="toolbar-label" data-i18n="toolbar.lang">JA</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Left Sidebar - Project Panel (Pro Feature) -->
+            <aside id="projectSidebar" class="project-sidebar">
+                <div class="sidebar-header">
+                    <h3 data-i18n="sidebar.projects">Projects</h3>
+                    <button id="btnToggleSidebar" class="sidebar-toggle" title="Toggle sidebar">&#9664;</button>
+                </div>
+
+                <!-- Search -->
+                <div class="sidebar-search">
+                    <input type="text" id="projectSearch"
+                           data-i18n-placeholder="sidebar.search.placeholder"
+                           placeholder="Search projects...">
+                </div>
+
+                <!-- Tag Filter -->
+                <div class="sidebar-tags" id="tagFilterContainer">
+                    <!-- Tags rendered dynamically -->
+                </div>
+
+                <!-- Favorites Section (Pro Feature) -->
+                <div id="favoritesSidebarSection" class="sidebar-section sidebar-favorites-section" style="display: none;">
+                    <h4><span class="favorites-icon">★</span> <span data-i18n="sidebar.favorites">Favorites</span></h4>
+                    <ul id="favoriteProjectsList" class="project-list favorites-list">
+                        <!-- Favorite projects rendered dynamically -->
+                    </ul>
+                </div>
+
+                <!-- Recent Projects -->
+                <div class="sidebar-section">
+                    <h4 data-i18n="sidebar.recent">Recent</h4>
+                    <ul id="recentProjectsList" class="project-list">
+                        <!-- Projects rendered dynamically -->
+                    </ul>
+                </div>
+
+                <!-- Actions -->
+                <div class="sidebar-actions">
+                    <button id="btnScanFolder" class="sidebar-btn" data-i18n="sidebar.scanFolder">
+                        Scan Folder
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Workspace (Center) -->
+            <section class="workspace">
+                <h2 data-i18n="workspace.title">Workspace</h2>
+                <div id="blocklyDiv" class="blockly-workspace">
+                    <p class="placeholder" data-i18n="workspace.loading">Loading Blockly workspace...</p>
+                </div>
+            </section>
+
+            <!-- Preview (Right) -->
+            <aside class="preview-pane">
+                <h2 data-i18n="preview.title">Generated Prompt</h2>
+                <div id="promptPreview" class="prompt-output">
+                    <p class="placeholder" data-i18n="preview.placeholder">Generated prompt will appear here.</p>
+                </div>
+                <!-- Validation Result Section -->
+                <div id="validationResult" class="validation-result"></div>
+                <!-- Pattern Suggestions Section -->
+                <div id="patternSuggestions" class="pattern-suggestions"></div>
+                <!-- Pattern Templates Section -->
+                <div id="patternTemplates" class="pattern-templates"></div>
+
+                <!-- AI Send Section (Pro Feature) -->
+                <div class="ai-send-section">
+                    <h3><span data-i18n="pro.sendAi.title">Send to AI</span></h3>
+                    <div class="ai-send-controls">
+                        <select id="aiProviderSelect" class="ai-provider-select">
+                            <option value="" data-i18n="pro.sendAi.selectProvider">Select Provider...</option>
+                        </select>
+                        <button id="btnSendToAi" class="btn-primary btn-send-ai">
+                            <span class="btn-icon">&#9654;</span>
+                            <span data-i18n="pro.sendAi.send">Send</span>
+                        </button>
+                    </div>
+                    <div id="aiResponseArea" class="ai-response-area" style="display: none;">
+                        <div class="ai-response-header">
+                            <span id="aiResponseProvider" class="ai-response-provider"></span>
+                            <button id="btnCopyResponse" class="btn-copy" title="Copy response">&#128203;</button>
+                        </div>
+                        <div id="aiResponseContent" class="ai-response-content"></div>
+                    </div>
+                    <div id="aiLoadingIndicator" class="ai-loading" style="display: none;">
+                        <span class="loading-spinner"></span>
+                        <span data-i18n="pro.sendAi.loading">Sending to AI...</span>
+                    </div>
+                </div>
+                <button id="btnCompareAi" class="btn-secondary btn-compare-ai">
+                    <span class="btn-icon">&#8644;</span>
+                    <span data-i18n="ent.compare.compareBtn">Compare</span>
+                </button>
+            </aside>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <span data-i18n="footer.version">Promps v2.1.0</span>
+            <span id="blockCounter" class="block-counter">
+                <span data-i18n="blocks.counter.label">Blocks:</span>
+                <span id="blockCount">0</span>
+                <span>/ 100</span>
+            </span>
+        </footer>
+    </div>
+
+<!-- Export Modal -->
+    <div id="exportModal" class="modal-overlay">
+        <div class="modal-content export-modal">
+            <div class="modal-header">
+                <h3 data-i18n="export.title">Export</h3>
+                <button id="btnCloseExportModal" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Export Type Selection -->
+                <div class="export-section">
+                    <h4 data-i18n="export.type.header">Export Type</h4>
+                    <div class="export-type-options">
+                        <label class="radio-option" id="typeOptionPrompt">
+                            <input type="radio" name="exportType" id="exportTypePrompt" value="prompt" checked>
+                            <span class="radio-label" data-i18n="export.type.prompt">Prompt Only</span>
+                            <span class="radio-description" data-i18n="export.type.promptDesc">Export the generated prompt text</span>
+                        </label>
+                        <label class="radio-option" id="typeOptionProject">
+                            <input type="radio" name="exportType" id="exportTypeProject" value="project">
+                            <span class="radio-label" data-i18n="export.type.project">Full Project</span>
+                            <span class="radio-description" data-i18n="export.type.projectDesc">Export workspace, metadata, and prompt</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Export Format Selection -->
+                <div class="export-section">
+                    <h4 data-i18n="export.format.header">Format</h4>
+                    <div class="export-format-options">
+                        <label class="radio-option" id="formatOptionTxt">
+                            <input type="radio" name="exportFormat" id="exportFormatTxt" value="txt" checked>
+                            <span class="radio-label">.txt</span>
+                            <span class="radio-description" data-i18n="export.format.txtDesc">Plain text file</span>
+                        </label>
+                        <label class="radio-option" id="formatOptionMd">
+                            <input type="radio" name="exportFormat" id="exportFormatMd" value="md">
+                            <span class="radio-label">.md</span>
+                            <span class="radio-description" data-i18n="export.format.mdDesc">Markdown format with header</span>
+                        </label>
+                        <label class="radio-option" id="formatOptionJson">
+                            <input type="radio" name="exportFormat" id="exportFormatJson" value="json">
+                            <span class="radio-label">.json</span>
+                            <span class="radio-description" data-i18n="export.format.jsonDesc">Structured JSON data</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Preview Section -->
+                <div class="export-section">
+                    <h4 data-i18n="export.preview.header">Preview</h4>
+                    <div class="export-preview">
+                        <pre id="exportPreviewContent" class="export-preview-content"></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnCancelExport" class="btn-secondary" data-i18n="export.cancel">Cancel</button>
+                <button id="btnConfirmExport" class="btn-primary" data-i18n="export.export">Export</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tag Editor Modal -->
+    <div id="tagEditorModal" class="modal-overlay">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3 data-i18n="tags.edit">Edit Tags</h3>
+                <button id="btnCloseTagEditor" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="current-tags" id="currentTagsList">
+                    <!-- Current tags with remove button -->
+                </div>
+                <div class="add-tag">
+                    <input type="text" id="newTagInput"
+                           data-i18n-placeholder="tags.addPlaceholder"
+                           placeholder="Add tag...">
+                    <button id="btnAddTag" class="btn-primary btn-small" data-i18n="tags.add">Add</button>
+                </div>
+                <div class="suggested-tags" id="suggestedTagsList">
+                    <!-- Existing tags for quick add -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnSaveTagsEdit" class="btn-primary" data-i18n="common.save">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Palette for Block Favorites (Pro Feature) -->
+    <div id="floatingPalette" class="floating-palette" style="display: none;">
+        <div class="floating-palette-header">
+            <span class="palette-title" data-i18n="blockFavorites.palette.title">Favorites</span>
+            <div class="palette-header-buttons">
+                <button class="palette-btn palette-btn-minimize" title="Minimize">−</button>
+                <button class="palette-btn palette-btn-close" title="Close">×</button>
+            </div>
+        </div>
+        <div class="floating-palette-content">
+            <div class="floating-palette-blocks">
+                <!-- Favorite blocks rendered dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Editor Modal (Pro Feature) -->
+    <div id="templateEditorModal" class="modal-overlay">
+        <div class="modal-content template-editor-modal">
+            <div class="modal-header">
+                <h3 data-i18n="template.editor.title">Edit Template</h3>
+                <button id="btnCloseTemplateEditor" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="template-editor-grid">
+                    <!-- Left: Settings -->
+                    <div class="template-settings">
+                        <div class="form-group">
+                            <label for="templateName" data-i18n="template.editor.name">Name</label>
+                            <input type="text" id="templateName" class="form-input" placeholder="Template name">
+                        </div>
+                        <div class="form-group">
+                            <label for="templateDescription" data-i18n="template.editor.description">Description</label>
+                            <textarea id="templateDescription" class="form-input" rows="2" data-i18n-placeholder="template.editor.descriptionPlaceholder" placeholder="Optional description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="template.editor.category">Category</label>
+                            <div class="category-select-row">
+                                <select id="templateCategory" class="form-input">
+                                    <option value="" data-i18n="template.editor.noCategory">No Category</option>
+                                </select>
+                                <button id="btnNewCategory" class="btn-small" title="New Category">+</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="template.editor.icon">Icon</label>
+                            <div id="templateIconSelector" class="icon-selector">
+                                <!-- Icons rendered by JS -->
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="template.editor.color">Color</label>
+                            <div id="templateColorSelector" class="color-selector">
+                                <!-- Colors rendered by JS -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Right: Preview -->
+                    <div class="template-preview">
+                        <label data-i18n="template.editor.preview">Preview</label>
+                        <div class="template-preview-box">
+                            <div class="template-preview-header">
+                                <span id="templatePreviewIcon" class="template-icon">📋</span>
+                                <span id="templatePreviewName" class="template-name">Template</span>
+                            </div>
+                            <div class="template-preview-body">
+                                <div id="templatePreviewBlocks" class="template-blocks">3 blocks</div>
+                                <div id="templatePreviewText" class="template-text-preview">Preview text...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnCancelTemplateEdit" class="btn-secondary" data-i18n="common.cancel">Cancel</button>
+                <button id="btnSaveTemplateEdit" class="btn-primary" data-i18n="common.save">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Editor Modal (Pro Feature) -->
+    <div id="categoryEditorModal" class="modal-overlay">
+        <div class="modal-content category-editor-modal">
+            <div class="modal-header">
+                <h3 data-i18n="category.editor.title">Manage Categories</h3>
+                <button id="btnCloseCategoryEditor" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="category-add-row">
+                    <input type="text" id="newCategoryName" class="form-input" placeholder="New category name" data-i18n-placeholder="category.editor.placeholder">
+                    <button id="btnAddCategory" class="btn-primary btn-small" data-i18n="category.editor.add">Add</button>
+                </div>
+                <div id="categoryList" class="category-list">
+                    <!-- Categories rendered by JS -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnCloseCategoryEditorFooter" class="btn-secondary" data-i18n="common.close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Color Theme Modal (Ent Feature) -->
+    <div id="colorThemeModal" class="modal-overlay">
+        <div class="modal-content color-theme-modal">
+            <div class="modal-header">
+                <h3 data-i18n="colorTheme.title">Color Theme</h3>
+                <button id="btnCloseColorThemeModal" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Mode Tabs -->
+                <div class="color-theme-tabs">
+                    <button id="colorThemeTabLight" class="color-theme-tab active" data-i18n="colorTheme.lightMode">Light Mode</button>
+                    <button id="colorThemeTabDark" class="color-theme-tab" data-i18n="colorTheme.darkMode">Dark Mode</button>
+                </div>
+
+                <!-- Primary Colors Group -->
+                <div class="color-group">
+                    <div class="color-group-header" data-i18n="colorTheme.group.primary">Primary Colors</div>
+                    <div class="color-grid">
+                        <div class="color-item">
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="colorInputbg_primary" value="#f5f5f5">
+                            </div>
+                            <div class="color-item-info">
+                                <div class="color-item-label" data-i18n="colorTheme.bgPrimary">Background Primary</div>
+                                <div class="color-item-value" id="colorValuebg_primary">#f5f5f5</div>
+                            </div>
+                        </div>
+                        <div class="color-item">
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="colorInputbg_surface" value="#ffffff">
+                            </div>
+                            <div class="color-item-info">
+                                <div class="color-item-label" data-i18n="colorTheme.bgSurface">Background Surface</div>
+                                <div class="color-item-value" id="colorValuebg_surface">#ffffff</div>
+                            </div>
+                        </div>
+                        <div class="color-item">
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="colorInputbg_header" value="#2c3e50">
+                            </div>
+                            <div class="color-item-info">
+                                <div class="color-item-label" data-i18n="colorTheme.bgHeader">Header Background</div>
+                                <div class="color-item-value" id="colorValuebg_header">#2c3e50</div>
+                            </div>
+                        </div>
+                        <div class="color-item">
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="colorInputtext_primary" value="#333333">
+                            </div>
+                            <div class="color-item-info">
+                                <div class="color-item-label" data-i18n="colorTheme.textPrimary">Text Primary</div>
+                                <div class="color-item-value" id="colorValuetext_primary">#333333</div>
+                            </div>
+                        </div>
+                        <div class="color-item">
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="colorInputaccent_primary" value="#2874a6">
+                            </div>
+                            <div class="color-item-info">
+                                <div class="color-item-label" data-i18n="colorTheme.accentPrimary">Accent Primary</div>
+                                <div class="color-item-value" id="colorValueaccent_primary">#2874a6</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blockly Colors Group -->
+                <div class="color-group">
+                    <div class="color-group-header" data-i18n="colorTheme.group.blockly">Blockly Workspace</div>
+                    <div class="color-grid">
+                        <div class="color-item">
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="colorInputblockly_workspace_bg" value="#ffffff">
+                            </div>
+                            <div class="color-item-info">
+                                <div class="color-item-label" data-i18n="colorTheme.blocklyWorkspace">Workspace Background</div>
+                                <div class="color-item-value" id="colorValueblockly_workspace_bg">#ffffff</div>
+                            </div>
+                        </div>
+                        <div class="color-item">
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="colorInputblockly_toolbox_bg" value="#f8f9fa">
+                            </div>
+                            <div class="color-item-info">
+                                <div class="color-item-label" data-i18n="colorTheme.blocklyToolbox">Toolbox Background</div>
+                                <div class="color-item-value" id="colorValueblockly_toolbox_bg">#f8f9fa</div>
+                            </div>
+                        </div>
+                        <div class="color-item">
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="colorInputblockly_flyout_bg" value="#f5f5f5">
+                            </div>
+                            <div class="color-item-info">
+                                <div class="color-item-label" data-i18n="colorTheme.blocklyFlyout">Flyout Background</div>
+                                <div class="color-item-value" id="colorValueblockly_flyout_bg">#f5f5f5</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accent Colors Group -->
+                <div class="color-group">
+                    <div class="color-group-header" data-i18n="colorTheme.group.accent">Accent Colors</div>
+                    <div class="color-grid">
+                        <div class="color-item">
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="colorInputaccent_success" value="#28a745">
+                            </div>
+                            <div class="color-item-info">
+                                <div class="color-item-label" data-i18n="colorTheme.accentSuccess">Success Color</div>
+                                <div class="color-item-value" id="colorValueaccent_success">#28a745</div>
+                            </div>
+                        </div>
+                        <div class="color-item">
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="colorInputaccent_error" value="#dc3545">
+                            </div>
+                            <div class="color-item-info">
+                                <div class="color-item-label" data-i18n="colorTheme.accentError">Error Color</div>
+                                <div class="color-item-value" id="colorValueaccent_error">#dc3545</div>
+                            </div>
+                        </div>
+                        <div class="color-item">
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="colorInputaccent_warning" value="#ffc107">
+                            </div>
+                            <div class="color-item-info">
+                                <div class="color-item-label" data-i18n="colorTheme.accentWarning">Warning Color</div>
+                                <div class="color-item-value" id="colorValueaccent_warning">#ffc107</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="color-theme-actions-left">
+                    <button id="btnResetColorTheme" class="btn-reset" data-i18n="colorTheme.reset">Reset</button>
+                </div>
+                <div class="color-theme-actions-right">
+                    <button id="btnCancelColorTheme" class="btn-secondary" data-i18n="colorTheme.cancel">Cancel</button>
+                    <button id="btnApplyColorTheme" class="btn-primary" data-i18n="colorTheme.apply">Apply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Color Theme Reset Confirmation Dialog -->
+    <div id="colorThemeResetConfirmDialog" class="confirm-dialog-overlay">
+        <div class="confirm-dialog">
+            <div class="confirm-dialog-content">
+                <p id="colorThemeResetConfirmMessage" data-i18n="colorTheme.resetConfirm">Reset colors to defaults?</p>
+            </div>
+            <div class="confirm-dialog-actions">
+                <button id="btnResetConfirmCancel" class="btn-secondary" data-i18n="dialog.cancel">Cancel</button>
+                <button id="btnResetConfirmOK" class="btn-primary" data-i18n="dialog.ok">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Compare Modal (Ent Feature) -->
+    <div id="aiCompareModal" class="modal-overlay">
+        <div class="modal-content ai-compare-modal">
+            <div class="modal-header">
+                <h3 data-i18n="ent.compare.title">AI Compare</h3>
+                <button id="btnCloseCompareModal" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Provider Selection -->
+                <div class="compare-section">
+                    <h4 data-i18n="ent.compare.selectProviders">Select Providers</h4>
+                    <div id="compareProviderList" class="compare-provider-list">
+                        <!-- Provider checkboxes rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- Prompt Preview -->
+                <div class="compare-section">
+                    <h4 data-i18n="ent.compare.prompt">Prompt</h4>
+                    <div id="comparePromptText" class="compare-prompt-text"></div>
+                </div>
+
+                <!-- Results -->
+                <div id="compareResultsSection" class="compare-section" style="display: none;">
+                    <h4 data-i18n="ent.compare.results">Results</h4>
+                    <div id="compareResultsContainer"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <span id="compareTotalTime" class="compare-total-time"></span>
+                <div>
+                    <button id="btnCancelCompare" class="btn-secondary" data-i18n="ent.compare.close">Close</button>
+                    <button id="btnStartCompare" class="btn-primary" data-i18n="ent.compare.compare">Compare</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Name Input Modal -->
+    <div id="templateNameModal" class="modal-overlay">
+        <div class="modal-content template-name-modal">
+            <div class="modal-header">
+                <h3 data-i18n="template.saveAs">Save as Template</h3>
+                <button id="btnCloseTemplateNameModal" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="templateNameInput" data-i18n="template.enterName">Enter template name:</label>
+                    <input type="text" id="templateNameInput" class="template-name-input" data-i18n-placeholder="template.namePlaceholder" placeholder="Template name" autofocus>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnCancelTemplateName" class="btn-secondary" data-i18n="template.cancel">Cancel</button>
+                <button id="btnSaveTemplateName" class="btn-primary" data-i18n="template.save">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Share Modal (v2.0.0) -->
+    <div id="qrShareModal" class="modal-overlay">
+        <div class="modal-content qr-share-modal">
+            <div class="modal-header">
+                <h3 data-i18n="qr.title">QR Share</h3>
+                <button id="btnCloseQrModal" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Tabs -->
+                <div class="qr-tabs">
+                    <button id="qrTabGenerate" class="qr-tab active" data-i18n="qr.tab.generate">Generate</button>
+                    <button id="qrTabImport" class="qr-tab" data-i18n="qr.tab.import">Import</button>
+                </div>
+
+                <!-- Generate Panel -->
+                <div id="qrPanelGenerate" class="qr-panel">
+                    <div class="qr-generate-section">
+                        <button id="btnGenerateQr" class="btn-primary" data-i18n="qr.generate">Generate QR Code</button>
+                        <div class="qr-preview-area">
+                            <img id="qrPreviewImage" alt="QR Code" />
+                            <span id="qrDataSize" class="qr-data-size"></span>
+                            <button id="btnSaveQr" class="btn-secondary" data-i18n="qr.save" disabled>Save QR</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Import Panel -->
+                <div id="qrPanelImport" class="qr-panel" style="display: none;">
+                    <div class="qr-import-section">
+                        <button id="btnImportQr" class="btn-primary" data-i18n="qr.importFile">Import QR File</button>
+                        <div id="qrImportPreview" class="qr-import-preview" style="display: none;"></div>
+                    </div>
+                </div>
+
+                <!-- Message -->
+                <div id="qrMessage" class="qr-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LAN Share Modal (v2.0.0) -->
+    <div id="lanShareModal" class="modal-overlay">
+        <div class="modal-content lan-share-modal">
+            <div class="modal-header">
+                <h3 data-i18n="lan.title">LAN Share</h3>
+                <button id="btnCloseLanModal" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Status Bar -->
+                <div class="lan-status-bar">
+                    <div class="lan-status-left">
+                        <span id="lanStatusIndicator" class="lan-status-indicator lan-status-inactive"></span>
+                        <span id="lanSharingStatus" data-i18n="lan.status.inactive">Inactive</span>
+                    </div>
+                    <button id="btnToggleSharing" class="btn-primary lan-btn-start" data-i18n="lan.start">Start Sharing</button>
+                </div>
+
+                <!-- Peer List -->
+                <div class="lan-peer-section">
+                    <h4>
+                        <span data-i18n="lan.peers">Discovered Peers</span>
+                        <button id="btnRefreshPeers" class="btn-secondary btn-small" data-i18n="lan.refresh">Refresh</button>
+                    </h4>
+                    <div id="lanPeerList" class="lan-peer-list">
+                        <div class="lan-no-peers" data-i18n="lan.noPeers">No peers found</div>
+                    </div>
+                </div>
+
+                <!-- Pending Transfers -->
+                <div id="lanPendingTransfers" class="lan-pending-section" style="display: none;"></div>
+
+                <!-- Message -->
+                <div id="lanMessage" class="lan-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wizard Modal (v2.1.0) -->
+    <div id="wizardModal" class="modal-overlay">
+        <div class="modal-content wizard-modal">
+            <div class="modal-header">
+                <h3 data-i18n="wizard.title">Prompt Wizard</h3>
+                <button id="btnCloseWizardModal" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="wizardSelectScreen">
+                    <p class="wizard-intro" data-i18n="wizard.intro">Select a wizard to build your prompt step by step.</p>
+                    <div id="wizardCardList" class="wizard-card-list"></div>
+                    <div class="wizard-io-buttons">
+                        <button id="btnWizardExport" class="btn-secondary btn-small" data-i18n="wizard.custom.export">Export</button>
+                        <button id="btnWizardImport" class="btn-secondary btn-small" data-i18n="wizard.custom.import">Import</button>
+                    </div>
+                </div>
+                <div id="wizardStepContent" class="wizard-step-content" style="display: none;">
+                    <h4 id="wizardStepTitle"></h4>
+                    <p id="wizardStepDescription"></p>
+                    <div id="wizardStepOptions" class="wizard-step-options"></div>
+                </div>
+                <div id="wizardPreviewScreen" class="wizard-preview-screen" style="display: none;">
+                    <h4 data-i18n="wizard.preview.title">Preview</h4>
+                    <div id="wizardPreviewBlocks" class="wizard-preview-blocks"></div>
+                </div>
+                <div id="wizardStepIndicator" class="wizard-step-indicator" style="display: none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnWizardBack" class="btn-secondary" data-i18n="wizard.back" style="display: none;">Back</button>
+                <button id="btnWizardCancel" class="btn-secondary" data-i18n="wizard.cancel">Cancel</button>
+                <button id="btnWizardNext" class="btn-primary" data-i18n="wizard.next" style="display: none;">Next</button>
+                <button id="btnWizardApply" class="btn-primary" data-i18n="wizard.apply" style="display: none;">Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wizard Editor Modal (v2.1.0) -->
+    <div id="wizardEditorModal" class="modal-overlay">
+        <div class="modal-content wizard-editor-modal">
+            <div class="modal-header">
+                <h3 data-i18n="wizard.editor.title">Wizard Editor</h3>
+                <button id="btnCloseWizardEditor" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Basic Info -->
+                <div class="wizard-editor-section">
+                    <div class="wizard-editor-field">
+                        <label data-i18n="wizard.editor.name">Wizard Name</label>
+                        <input type="text" id="wizardEditorName" placeholder="My Wizard" />
+                    </div>
+                    <div class="wizard-editor-field">
+                        <label data-i18n="wizard.editor.description">Description</label>
+                        <input type="text" id="wizardEditorDescription" placeholder="Description" />
+                    </div>
+                    <div class="wizard-editor-field">
+                        <label data-i18n="wizard.editor.icon">Icon</label>
+                        <div id="wizardEditorIconPicker" class="wizard-icon-picker">
+                            <span class="wizard-icon-option selected" data-icon="&#129497;">&#129497;</span>
+                            <span class="wizard-icon-option" data-icon="&#128270;">&#128270;</span>
+                            <span class="wizard-icon-option" data-icon="&#127760;">&#127760;</span>
+                            <span class="wizard-icon-option" data-icon="&#128203;">&#128203;</span>
+                            <span class="wizard-icon-option" data-icon="&#9889;">&#9889;</span>
+                            <span class="wizard-icon-option" data-icon="&#128736;">&#128736;</span>
+                            <span class="wizard-icon-option" data-icon="&#128640;">&#128640;</span>
+                            <span class="wizard-icon-option" data-icon="&#11088;">&#11088;</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Steps -->
+                <div class="wizard-editor-section">
+                    <div class="wizard-editor-section-header">
+                        <h4 data-i18n="wizard.editor.steps">Steps</h4>
+                        <button id="btnAddWizardStep" class="btn-small btn-primary" data-i18n="wizard.editor.addStep">Add Step</button>
+                    </div>
+                    <div id="wizardEditorSteps" class="wizard-editor-steps"></div>
+                </div>
+
+                <!-- Block Rules -->
+                <div class="wizard-editor-section">
+                    <div class="wizard-editor-section-header">
+                        <h4 data-i18n="wizard.editor.blockRules">Block Rules</h4>
+                        <button id="btnAddBlockRule" class="btn-small btn-primary" data-i18n="wizard.editor.addBlock">Add Rule</button>
+                    </div>
+                    <div id="wizardEditorBlockRules" class="wizard-editor-block-rules"></div>
+                </div>
+
+                <!-- Default Blocks (fallback) -->
+                <div class="wizard-editor-section">
+                    <div class="wizard-editor-section-header">
+                        <h4 data-i18n="wizard.editor.fallbackBlocks" data-i18n-title="wizard.editor.fallbackBlocks.tooltip" title="Blocks used when no rule conditions match">Default Blocks</h4>
+                        <button id="btnAddFallbackBlock" class="btn-small btn-secondary" data-i18n="wizard.editor.addBlock">Add Block</button>
+                    </div>
+                    <div id="wizardEditorFallbackBlocks" class="wizard-editor-fallback-blocks"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnWizardEditorCancel" class="btn-secondary" data-i18n="wizard.editor.cancel">Cancel</button>
+                <button id="btnWizardEditorSave" class="btn-primary" data-i18n="wizard.editor.save">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/blockly-config.js"></script>
+    <script src="js/color-theme-manager.js"></script>
+    <script src="js/block-favorites-manager.js"></script>
+    <script src="js/floating-palette.js"></script>
+    <script src="js/project-manager.js"></script>
+    <script src="js/validation-ui.js"></script>
+    <script src="js/api-keys.js"></script>
+    <script src="js/ai-send.js"></script>
+    <script src="js/ai-compare.js"></script>
+    <script src="js/export-manager.js"></script>
+    <script src="js/project-index.js"></script>
+    <script src="js/project-sidebar.js"></script>
+    <script src="js/template-editor.js"></script>
+    <script src="js/template-export.js"></script>
+    <script src="js/category-editor.js"></script>
+    <script src="js/qr-share.js"></script>
+    <script src="js/lan-share.js"></script>
+    <script src="js/wizard-manager.js"></script>
+    <script src="js/wizard-editor.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

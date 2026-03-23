@@ -1,0 +1,40 @@
+[package]
+name = "promps"
+version = "2.1.0"
+edition = "2021"
+authors = ["Yoshihiro NAKAHARA <promps-dev@zundou.org>"]
+description = "Promps: A ViPL (Visual Prompt Language) generation tool"
+license = "MIT"
+repository = "https://github.com/BonoJovi/Promps"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+dirs = "5"
+base64 = "0.22"
+sha2 = "0.10"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+tokio = { version = "1", features = ["full"] }
+# v2.0.0: QR Code Sharing
+qrcode = "0.14"
+rqrr = "0.7"
+image = { version = "0.25", default-features = false, features = ["png"] }
+flate2 = "1"
+# v2.0.0: LAN P2P File Exchange
+mdns-sd = "0.13"
+uuid = { version = "1", features = ["v4"] }
+gethostname = "0.5"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[lib]
+name = "promps"
+path = "src/lib.rs"
+
+[[bin]]
+name = "promps"
+path = "src/main.rs"

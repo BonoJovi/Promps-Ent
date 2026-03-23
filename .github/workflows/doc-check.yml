@@ -1,0 +1,102 @@
+name: Document Consistency Check
+
+on:
+  push:
+    paths:
+      - 'Cargo.toml'
+      - 'package.json'
+      - 'tauri.conf.json'
+      - '.ai-context/ESSENTIAL.md'
+      - 'README.md'
+  pull_request:
+    paths:
+      - 'Cargo.toml'
+      - 'package.json'
+      - 'tauri.conf.json'
+      - '.ai-context/ESSENTIAL.md'
+      - 'README.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-version-consistency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract versions from all sources
+        id: versions
+        run: |
+          # Extract version from Cargo.toml
+          CARGO_VER=$(grep -oP '^version = "\K[^"]+' Cargo.toml | head -1)
+          echo "cargo=$CARGO_VER" >> $GITHUB_OUTPUT
+
+          # Extract version from package.json
+          PKG_VER=$(node -p "require('./package.json').version")
+          echo "package=$PKG_VER" >> $GITHUB_OUTPUT
+
+          # Extract version from tauri.conf.json
+          TAURI_VER=$(node -p "require('./tauri.conf.json').version")
+          echo "tauri=$TAURI_VER" >> $GITHUB_OUTPUT
+
+          # Extract version from ESSENTIAL.md
+          ESSENTIAL_VER=$(grep -oP '\*\*Version\*\*: v\K[0-9.]+' .ai-context/ESSENTIAL.md || echo "NOT_FOUND")
+          echo "essential=$ESSENTIAL_VER" >> $GITHUB_OUTPUT
+
+          # Extract version from README badge
+          README_VER=$(grep -oP 'Version-\K[0-9.]+' README.md | head -1 || echo "NOT_FOUND")
+          echo "readme=$README_VER" >> $GITHUB_OUTPUT
+
+          echo "=== Extracted Versions ==="
+          echo "Cargo.toml:      $CARGO_VER"
+          echo "package.json:    $PKG_VER"
+          echo "tauri.conf.json: $TAURI_VER"
+          echo "ESSENTIAL.md:    $ESSENTIAL_VER"
+          echo "README.md:       $README_VER"
+
+      - name: Check version consistency
+        run: |
+          CARGO="${{ steps.versions.outputs.cargo }}"
+          PKG="${{ steps.versions.outputs.package }}"
+          TAURI="${{ steps.versions.outputs.tauri }}"
+          ESSENTIAL="${{ steps.versions.outputs.essential }}"
+          README="${{ steps.versions.outputs.readme }}"
+
+          ERRORS=0
+
+          # Check core version files match
+          if [ "$CARGO" != "$PKG" ]; then
+            echo "::error::Version mismatch: Cargo.toml ($CARGO) != package.json ($PKG)"
+            ERRORS=$((ERRORS + 1))
+          fi
+
+          if [ "$CARGO" != "$TAURI" ]; then
+            echo "::error::Version mismatch: Cargo.toml ($CARGO) != tauri.conf.json ($TAURI)"
+            ERRORS=$((ERRORS + 1))
+          fi
+
+          # Check documentation versions (warning only if not found)
+          if [ "$ESSENTIAL" = "NOT_FOUND" ]; then
+            echo "::warning::Version not found in ESSENTIAL.md"
+          elif [ "$CARGO" != "$ESSENTIAL" ]; then
+            echo "::error::Version mismatch: Cargo.toml ($CARGO) != ESSENTIAL.md ($ESSENTIAL)"
+            ERRORS=$((ERRORS + 1))
+          fi
+
+          if [ "$README" = "NOT_FOUND" ]; then
+            echo "::warning::Version badge not found in README.md"
+          elif [ "$CARGO" != "$README" ]; then
+            echo "::error::Version mismatch: Cargo.toml ($CARGO) != README.md badge ($README)"
+            ERRORS=$((ERRORS + 1))
+          fi
+
+          if [ $ERRORS -gt 0 ]; then
+            echo ""
+            echo "::error::Found $ERRORS version inconsistencies. Please use version-bump workflow to update versions."
+            exit 1
+          fi
+
+          echo ""
+          echo "✅ All versions are consistent: v$CARGO"

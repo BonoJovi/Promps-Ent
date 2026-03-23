@@ -1,0 +1,118 @@
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # 🙏 質問
+
+        Prompsの使い方や動作に関する質問をしてください。
+
+        質問する前に、以下を確認してください：
+        - [README.md](../../README.md) を読みましたか？
+        - [既存のQ&A](../../discussions/categories/q-a) を検索しましたか？
+        - [ドキュメント](../../docs/) を確認しましたか？
+
+  - type: textarea
+    id: question
+    attributes:
+      label: 質問内容
+      description: 質問を具体的に記載してください
+      placeholder: 例）パーティクルブロック「が」と「を」の使い分けがわかりません
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: 質問のカテゴリー
+      options:
+        - インストール・セットアップ
+        - 基本的な使い方
+        - ブロックの使い方
+        - エラー・トラブルシューティング
+        - 機能の仕様について
+        - その他
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 環境情報
+      description: 問題が発生している場合、環境情報を記載してください
+      placeholder: |
+        - OS: Ubuntu 22.04 / Windows 11 / macOS 14.x
+        - Promps version: v0.0.2
+        - インストール方法: GitHub Releases / ソースからビルド
+    validations:
+      required: false
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順（エラーの場合）
+      description: 問題を再現できる手順を記載してください
+      placeholder: |
+        1. アプリを起動
+        2. 「名詞」ブロックを配置
+        3. ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: error-message
+    attributes:
+      label: エラーメッセージ（該当する場合）
+      description: エラーメッセージやコンソールログを貼り付けてください
+      render: shell
+      placeholder: |
+        エラーメッセージをここに貼り付けてください
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待する動作
+      description: どのような動作を期待していますか？
+      placeholder: 例）「が」ブロックを配置すると、プレビューに「(SUBJECT)」が表示されると期待しています
+    validations:
+      required: false
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 実際の動作
+      description: 実際にはどうなりますか？
+      placeholder: 例）プレビューには何も表示されません
+    validations:
+      required: false
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: 試したこと
+      description: 問題解決のために試したことがあれば記載してください
+      placeholder: |
+        - アプリの再起動
+        - 再インストール
+        - ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 追加情報
+      description: スクリーンショットや補足情報
+      placeholder: スクリーンショットを添付すると理解しやすくなります
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: 確認事項
+      options:
+        - label: README.mdとドキュメントを確認しました
+          required: true
+        - label: 既存のQ&Aを検索しました
+          required: true
