@@ -27,7 +27,7 @@
 いつもPrompsに関心を寄せていただき、誠にありがとうございます。
 プロジェクト発案者のBonoJovi(Yoshihiro NAKAHARA)です。
 
-**🎉 v2.1.0 をリリースいたしました！全機能が無料でご利用いただけます。**
+**🎉 v3.0.0 をリリースいたしました！全機能が無料でご利用いただけます。**
 
 **主な機能**:
 - **ビジュアルブロック編集** - Scratchのようにドラッグ&ドロップでプロンプト作成
@@ -54,7 +54,7 @@
 Thank you for your continued interest in Promps.
 I'm BonoJovi (Yoshihiro NAKAHARA), the project initiator.
 
-**🎉 We have released v2.1.0! All features are now free to use.**
+**🎉 We have released v3.0.0! All features are now free to use.**
 
 **Key Features**:
 - **Visual block editing** - Create prompts by drag & drop, just like Scratch
