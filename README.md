@@ -2,8 +2,9 @@
 
 <div align="center">
 
-> **A Visual Block-Based Tool for Creating Structured AI Prompts**
-> **AIプロンプト作成のためのビジュアルブロックベースツール**
+**A Visual Block-Based Tool for Creating Structured AI Prompts**
+
+**AIプロンプト作成のためのビジュアルブロックベースツール**
 
 [![Version](https://img.shields.io/badge/Version-3.0.0-blue)](https://github.com/BonoJovi/Promps-Ent/releases)
 [![Tests](https://img.shields.io/badge/Tests-880%20passing-brightgreen)](https://github.com/BonoJovi/Promps-Ent)
