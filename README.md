@@ -76,6 +76,29 @@ I'm BonoJovi (Yoshihiro NAKAHARA), the project initiator.
 
 </div>
 
+<!-- STATS_START -->
+## 📊 Repository Statistics
+
+<div align="center">
+
+### 📈 Daily Traffic
+
+![Daily Traffic Stats](docs/stats_graph_daily.png)
+
+### 📊 Cumulative Traffic
+
+![Cumulative Traffic Stats](docs/stats_graph_cumulative.png)
+
+| Metric | Count |
+|--------|-------|
+| 👁️ **Total Views** | **9** |
+| 📦 **Total Clones** | **41** |
+
+*Last Updated: 2026-03-28 06:03 UTC*
+
+</div>
+<!-- STATS_END -->
+
 ---
 
 ## Quick Start / クイックスタート
@@ -448,27 +471,3 @@ Copyright (c) 2025-2026 Yoshihiro NAKAHARA
 
 **Built with ❤ for better AI collaboration**
 **より良いAIコラボレーションのために ❤ を込めて開発**
-
-
-<!-- STATS_START -->
-## 📊 Repository Statistics
-
-<div align="center">
-
-### 📈 Daily Traffic
-
-![Daily Traffic Stats](docs/stats_graph_daily.png)
-
-### 📊 Cumulative Traffic
-
-![Cumulative Traffic Stats](docs/stats_graph_cumulative.png)
-
-| Metric | Count |
-|--------|-------|
-| 👁️ **Total Views** | **9** |
-| 📦 **Total Clones** | **41** |
-
-*Last Updated: 2026-03-28 06:03 UTC*
-
-</div>
-<!-- STATS_END -->
