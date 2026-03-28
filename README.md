@@ -13,6 +13,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 **Build prompts by dragging and dropping blocks, then send directly to AI!**
+
 **Scratchのようにブロックでプロンプトを作成し、そのままAIに送信！**
 
 </div>
