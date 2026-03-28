@@ -82,8 +82,9 @@ def generate_daily_graph(data):
         ax2.grid(True, alpha=0.3)
         ax2.set_title(f'Total Clones: {data["total_clones"]:,}', fontsize=11)
 
-    # Format x-axis
+    # Format axes
     for ax in [ax1, ax2]:
+        ax.set_ylim(bottom=0)
         if x_min and x_max:
             ax.set_xlim(x_min, x_max)
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
@@ -169,8 +170,9 @@ def generate_cumulative_graph(data):
         ax2.grid(True, alpha=0.3)
         ax2.set_title(f'Total Clones: {data["total_clones"]:,}', fontsize=11)
 
-    # Format x-axis
+    # Format axes
     for ax in [ax1, ax2]:
+        ax.set_ylim(bottom=0)
         if x_min and x_max:
             ax.set_xlim(x_min, x_max)
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
