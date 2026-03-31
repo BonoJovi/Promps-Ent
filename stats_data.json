@@ -79,6 +79,11 @@
       "timestamp": "2026-03-28T00:00:00Z",
       "count": 17,
       "uniques": 2
+    },
+    {
+      "timestamp": "2026-03-29T00:00:00Z",
+      "count": 0,
+      "uniques": 0
     }
   ],
   "clones": [
@@ -161,9 +166,14 @@
       "timestamp": "2026-03-28T00:00:00Z",
       "count": 65,
       "uniques": 28
+    },
+    {
+      "timestamp": "2026-03-29T00:00:00Z",
+      "count": 28,
+      "uniques": 12
     }
   ],
   "total_views": 26,
-  "total_clones": 107,
-  "last_updated": "2026-03-30T01:35:03.303845"
+  "total_clones": 135,
+  "last_updated": "2026-03-31T01:34:49.562612"
 }
