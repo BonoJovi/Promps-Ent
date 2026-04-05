@@ -11,6 +11,7 @@
 [![Rust](https://img.shields.io/badge/Rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![Tauri](https://img.shields.io/badge/Tauri-v2-blue.svg)](https://tauri.app/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/bonojovi)
 
 **Build prompts by dragging and dropping blocks, then send directly to AI!**
 
@@ -473,3 +474,5 @@ Copyright (c) 2025-2026 Yoshihiro NAKAHARA
 
 **Built with ❤ for better AI collaboration**
 **より良いAIコラボレーションのために ❤ を込めて開発**
+
+[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/bonojovi)
