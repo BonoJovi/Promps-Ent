@@ -2,16 +2,19 @@
 
 <div align="center">
 
-> **A Visual Block-Based Tool for Creating Structured AI Prompts**
-> **AIプロンプト作成のためのビジュアルブロックベースツール**
+**A Visual Block-Based Tool for Creating Structured AI Prompts**
+
+**AIプロンプト作成のためのビジュアルブロックベースツール**
 
 [![Version](https://img.shields.io/badge/Version-3.0.0-blue)](https://github.com/BonoJovi/Promps-Ent/releases)
 [![Tests](https://img.shields.io/badge/Tests-880%20passing-brightgreen)](https://github.com/BonoJovi/Promps-Ent)
 [![Rust](https://img.shields.io/badge/Rust-1.70+-orange.svg)](https://www.rust-lang.org/)
 [![Tauri](https://img.shields.io/badge/Tauri-v2-blue.svg)](https://tauri.app/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/bonojovi)
 
 **Build prompts by dragging and dropping blocks, then send directly to AI!**
+
 **Scratchのようにブロックでプロンプトを作成し、そのままAIに送信！**
 
 </div>
@@ -27,7 +30,7 @@
 いつもPrompsに関心を寄せていただき、誠にありがとうございます。
 プロジェクト発案者のBonoJovi(Yoshihiro NAKAHARA)です。
 
-**🎉 v2.1.0 をリリースいたしました！全機能が無料でご利用いただけます。**
+**🎉 v3.0.0 をリリースいたしました！全機能が無料でご利用いただけます。**
 
 **主な機能**:
 - **ビジュアルブロック編集** - Scratchのようにドラッグ&ドロップでプロンプト作成
@@ -54,7 +57,7 @@
 Thank you for your continued interest in Promps.
 I'm BonoJovi (Yoshihiro NAKAHARA), the project initiator.
 
-**🎉 We have released v2.1.0! All features are now free to use.**
+**🎉 We have released v3.0.0! All features are now free to use.**
 
 **Key Features**:
 - **Visual block editing** - Create prompts by drag & drop, just like Scratch
@@ -75,6 +78,29 @@ I'm BonoJovi (Yoshihiro NAKAHARA), the project initiator.
 **2026-03-24 (JST) Written by Yoshihiro NAKAHARA**
 
 </div>
+
+<!-- STATS_START -->
+## 📊 Repository Statistics
+
+<div align="center">
+
+### 📈 Daily Traffic
+
+![Daily Traffic Stats](docs/stats_graph_daily.png)
+
+### 📊 Cumulative Traffic
+
+![Cumulative Traffic Stats](docs/stats_graph_cumulative.png)
+
+| Metric | Count |
+|--------|-------|
+| 👁️ **Total Views** | **32** |
+| 📦 **Total Clones** | **193** |
+
+*Last Updated: 2026-04-04 01:34 UTC*
+
+</div>
+<!-- STATS_END -->
 
 ---
 
@@ -448,3 +474,5 @@ Copyright (c) 2025-2026 Yoshihiro NAKAHARA
 
 **Built with ❤ for better AI collaboration**
 **より良いAIコラボレーションのために ❤ を込めて開発**
+
+[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/bonojovi)
