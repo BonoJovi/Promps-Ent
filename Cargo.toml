@@ -20,7 +20,7 @@ reqwest = { version = "0.12", default-features = false, features = ["json", "rus
 tokio = { version = "1", features = ["full"] }
 # v2.0.0: QR Code Sharing
 qrcode = "0.14"
-rqrr = "0.7"
+rqrr = "0.10"
 image = { version = "0.25", default-features = false, features = ["png"] }
 flate2 = "1"
 # v2.0.0: LAN P2P File Exchange
