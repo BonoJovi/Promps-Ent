@@ -201,12 +201,13 @@ reviews:
     # after the first review so subsequent commits require an
     # explicit `@coderabbitai review` (or the next base-branch merge).
     auto_pause_after_reviewed_commits: 1
-    # `ignore_title_keywords` uses case-insensitive SUBSTRING match,
-    # so bare `wip` matches `feat: add swipe gesture`. Use bracketed
-    # / punctuated forms only.
+    # `ignore_title_keywords` uses case-insensitive SUBSTRING match.
+    # `wip` alone matches `feat: add swipe gesture`; even `wip:`
+    # matches a meta-PR like `fix: document the "wip:" syntax`.
+    # `[wip]` (bracketed) is the safest form — practically no
+    # innocent PR title contains those five characters in sequence.
     ignore_title_keywords:
       - "[wip]"
-      - "wip:"
       - "[skip review]"
     base_branches:
       - "main"
