@@ -1,0 +1,216 @@
+# CodeRabbit configuration for Promps (Promps-Ent repository).
+# https://docs.coderabbit.ai/reference/configuration
+#
+# Promps is a Tauri v2 visual prompt-builder: Rust backend + Vanilla
+# JS (Blockly-based) frontend + Jest, trilingual Japanese / English /
+# French, with API-key management, multi-AI compare, LAN P2P sharing
+# (QR + discovery + transfer). This config tunes CodeRabbit to
+# review the parts that actually change and to enforce the
+# project-specific rules from CLAUDE.md and .ai-context/ESSENTIAL.md.
+
+language: "ja-JP"
+early_access: false
+enable_free_tier: true
+
+# tone_instructions is capped at 250 chars by the validator — keep terse.
+tone_instructions: |
+  Each finding needs a concrete failure scenario (specific inputs/state → wrong output, crash, data corruption, broken user flow). Rank real correctness / security / API-stability bugs above style nits. Reply in Japanese; keep findings ≤10 lines.
+
+reviews:
+  profile: "assertive"
+  request_changes_workflow: false
+  high_level_summary: true
+
+  path_filters:
+    # Rust build artifacts.
+    - "!target/**"
+    # Frontend / Jest dependencies.
+    - "!node_modules/**"
+    - "!res/tests/node_modules/**"
+    # AI collaboration methodology & shared references — keep the
+    # noisy pieces out while leaving the authoritative project
+    # docs (ESSENTIAL.md, ROADMAP, context/, knowledge/) reviewable.
+    # NOTE: a positive re-include entry (e.g. `.ai-context/ESSENTIAL.md`)
+    # would flip path_filters into allowlist mode and drop every
+    # other file — use narrow negative patterns only.
+    - "!.ai-context/shared/**"   # git submodule (ai-context-shared)
+    # `archive` appears at multiple depths: `.ai-context/archive/`,
+    # `.ai-context/knowledge/archive/`, `.ai-context/context/coding/archive/`.
+    # Both patterns kept — some glob impls require `**` to match ≥1 dir,
+    # so the top-level entry is not redundant.
+    - "!.ai-context/archive/**"
+    - "!.ai-context/**/archive/**"
+    # Session scratchpads, bug lists, review notes.
+    - "!work/**"
+    # Generated Tauri capability / schema files.
+    - "!gen/**"
+    - "!capabilities/**"
+    # Static assets: icons, screenshots.
+    - "!icons/**"
+    - "!docs/screenshots/**"
+    # Auto-generated stats / scratch outputs.
+    - "!stats_data.json"
+    - "!prompt_output.txt"
+    # GitHub Discussion / Issue templates (curated text, not code).
+    - "!.github/DISCUSSION_TEMPLATE/**"
+    - "!.github/ISSUE_TEMPLATE/**"
+
+  path_instructions:
+    - path: "src/**/*.rs"
+      instructions: |
+        Production Rust must NOT use unwrap()/expect() — always use
+        Result<T, E> or explicit fallbacks. unwrap()/expect() are
+        allowed only under #[cfg(test)] and in `#[test]` / `#[tokio::test]`
+        fns. Poison-recovery via `.unwrap_or_else(|e| e.into_inner())`
+        on Mutex/RwLock is idiomatic and NOT a violation.
+        Additional project rules to flag:
+        (a) API STABILITY (Critical Rule #1) — Phase 0 APIs are
+            immutable. Do NOT modify the signature or public behaviour
+            of an existing pub fn / pub struct / #[tauri::command] in
+            `src/commands.rs`, `src/lib.rs`, or `src/modules/*.rs`.
+            Add a new function instead. Flag any signature change,
+            renamed pub item, or field removal on a #[derive(Serialize)]
+            struct that crosses the Tauri IPC boundary.
+        (b) SECURITY-CRITICAL MODULES — `src/modules/api_keys.rs`
+            handles user AI-provider credentials, and
+            `src/modules/lan_discovery.rs` / `lan_transfer.rs` /
+            `qr_share.rs` expose the app to the local network. In
+            these modules: never log secrets (API keys, session
+            tokens, or peer identities); validate every field of
+            every message coming from the network before acting on
+            it; never trust filenames from a peer; scope any file
+            write to a known-safe directory (no path traversal).
+        (c) TAURI COMMAND SURFACE — every new #[tauri::command] in
+            `src/commands.rs` MUST be registered in the
+            `invoke_handler(tauri::generate_handler![…])` list in
+            `src/lib.rs` / `src/main.rs`, otherwise the frontend
+            call fails at runtime with an opaque error.
+        (d) Do not flag comment length or missing doc comments.
+
+    - path: "res/js/**/*.js"
+      instructions: |
+        Frontend is Vanilla JS + Blockly (no bundler). Every
+        user-facing string MUST be resolved through `i18n.js` (the
+        `TRANSLATIONS` table / `t()` helper) with all three locales
+        populated: `ja`, `en`, `fr` (trilingual since v1.8.0) — flag
+        any hardcoded Japanese/English/French UI string in modals,
+        toasts, error messages, or dynamically-rendered labels.
+        Missing a locale for a new key silently falls back and ships
+        the key or a mismatched language to that locale's users.
+        All dynamic values rendered into the DOM MUST be escaped
+        before `innerHTML` / template concatenation (see the
+        `escapeHtml` helper already used in `lan-share.js`,
+        `project-sidebar.js`, `qr-share.js`, `wizard-editor.js`) —
+        flag any raw `${value}` / `+ value` interpolation into
+        `innerHTML`. Prefer `textContent` / `createElement` when the
+        value never needs to carry markup.
+        Tauri app phrasing: say "restart the app", never "reload the
+        browser".
+
+    - path: "res/tests/**/*.js"
+      instructions: |
+        Jest suite (currently 625 frontend tests). Any new
+        `*.test.js` file whose tests substantially change the total
+        count should also update the test-count line in
+        `.ai-context/ESSENTIAL.md` (currently "Backend 255 +
+        Frontend 625"). Avoid the CodeQL `hardcoded-credentials`
+        pattern: do NOT bind a literal password / API key string to
+        a variable named `password` / `apiKey`. Prefer a template
+        literal (`` `sk-test${suffix}...` ``) bound to a variable
+        named `pw` / `keyStub` — this pattern trips the Critical
+        alert in real reviews.
+
+    - path: "src/modules/api_keys.rs"
+      instructions: |
+        API-key storage is user-secret territory. Do NOT log,
+        print, format!, or otherwise emit the plaintext key value
+        anywhere — not in error messages, not in debug traces, not
+        in tests. Redact to a fixed prefix + length when a display
+        form is needed. Any change that widens the key-value's
+        exposure (added to a Serialize struct, logged, returned to
+        a broader scope) is a bug.
+
+    - path: "src/modules/{lan_discovery,lan_transfer,qr_share}.rs"
+      instructions: |
+        Peer-to-peer over LAN — treat every byte from the network
+        as adversarial input, even on a trusted network (RFC 1918
+        does not mean RFC "not-a-threat-model"). Validate every
+        field length and character class before use; reject
+        oversized frames; never dereference a filename from a peer
+        without sanitizing it and scoping the write to a known-safe
+        directory; bound every read / accept with an explicit
+        timeout; never spawn a shell with peer-controlled strings.
+
+    - path: "Cargo.toml"
+      instructions: |
+        Critical Rule #5 defines THREE version-source files that
+        must move together in one commit: `Cargo.toml`,
+        `tauri.conf.json`, `package.json`. `Cargo.lock` is not one
+        of the three — it is regenerated automatically by
+        `cargo build` and must simply be staged in the same commit
+        so the build stays reproducible. Flag any partial version
+        bump of the three (a mismatch ships a binary whose About
+        dialog and updater manifest disagree), and flag a version
+        bump that leaves `Cargo.lock` unstaged.
+        Adding a new direct dependency: prefer a maintained,
+        popular crate; call out anything unmaintained or with
+        outstanding advisories (this repo has already shipped
+        transitive-only bumps for RUSTSEC-2026-0194/0195).
+
+    - path: "tauri.conf.json"
+      instructions: |
+        `version` here must match `Cargo.toml` `[package].version`
+        and `package.json` `version` exactly. Window configuration
+        changes (size, decorations, min/max, position) can regress
+        cross-platform display behaviour — call out any change to
+        `windows[].{width,height,x,y,decorations,resizable}` for
+        explicit review.
+
+    - path: "package.json"
+      instructions: |
+        `version` here must match `Cargo.toml` and `tauri.conf.json`.
+        Adding a new dependency at repo root is unusual — the app's
+        JS is served from `res/` without a bundler — flag additions
+        unless clearly justified (Tauri tooling, Jest add-on, …).
+
+    - path: "src/commands.rs"
+      instructions: |
+        This file is the Tauri IPC surface. Any new #[tauri::command]
+        must be added to the `invoke_handler(tauri::generate_handler![…])`
+        registration in `src/lib.rs` in the same PR. Command return
+        types cross the IPC boundary and are serialised — prefer
+        `Result<T, String>` (or a typed error `enum` that implements
+        `serde::Serialize`) so the frontend can render a real
+        message; a bare `panic!` on the Rust side becomes an opaque
+        frontend error.
+
+    - path: "**/*.md"
+      instructions: |
+        `CLAUDE.md` and `.ai-context/ESSENTIAL.md` are authoritative
+        for project rules — flag any doc change that contradicts
+        them (e.g. a README that says feature branches are
+        deleted-after-merge when Critical Rule #2 says they persist).
+        Skip prose-level style nits on developer docs.
+
+  auto_review:
+    enabled: true
+    drafts: false
+    auto_incremental_review: true
+    # `0` disables auto-pause and re-reviews every push, which burns
+    # free-tier review quota fast on chatty branches. `1` pauses
+    # after the first review so subsequent commits require an
+    # explicit `@coderabbitai review` (or the next base-branch merge).
+    auto_pause_after_reviewed_commits: 1
+    # `ignore_title_keywords` uses case-insensitive SUBSTRING match,
+    # so bare `wip` matches `feat: add swipe gesture`. Use bracketed
+    # / punctuated forms only.
+    ignore_title_keywords:
+      - "[wip]"
+      - "wip:"
+      - "[skip review]"
+    base_branches:
+      - "main"
+      - "dev"
+
+chat:
+  auto_reply: true
