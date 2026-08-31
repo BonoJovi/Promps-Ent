@@ -34,7 +34,12 @@ reviews:
     # would flip path_filters into allowlist mode and drop every
     # other file — use narrow negative patterns only.
     - "!.ai-context/shared/**"   # git submodule (ai-context-shared)
-    - "!.ai-context/archive/**"  # superseded docs
+    # `archive` appears at multiple depths: `.ai-context/archive/`,
+    # `.ai-context/knowledge/archive/`, `.ai-context/context/coding/archive/`.
+    # Both patterns kept — some glob impls require `**` to match ≥1 dir,
+    # so the top-level entry is not redundant.
+    - "!.ai-context/archive/**"
+    - "!.ai-context/**/archive/**"
     # Session scratchpads, bug lists, review notes.
     - "!work/**"
     # Generated Tauri capability / schema files.
