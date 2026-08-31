@@ -27,9 +27,14 @@ reviews:
     # Frontend / Jest dependencies.
     - "!node_modules/**"
     - "!res/tests/node_modules/**"
-    # AI collaboration methodology docs — pulled into CLAUDE.md
-    # via `@` on demand, not the source of truth for code review.
-    - "!.ai-context/**"
+    # AI collaboration methodology & shared references — keep the
+    # noisy pieces out while leaving the authoritative project
+    # docs (ESSENTIAL.md, ROADMAP, context/, knowledge/) reviewable.
+    # NOTE: a positive re-include entry (e.g. `.ai-context/ESSENTIAL.md`)
+    # would flip path_filters into allowlist mode and drop every
+    # other file — use narrow negative patterns only.
+    - "!.ai-context/shared/**"   # git submodule (ai-context-shared)
+    - "!.ai-context/archive/**"  # superseded docs
     # Session scratchpads, bug lists, review notes.
     - "!work/**"
     # Generated Tauri capability / schema files.
@@ -133,12 +138,15 @@ reviews:
 
     - path: "Cargo.toml"
       instructions: |
-        Version bumps here MUST accompany the other three version
-        sources in the same commit (Critical Rule #5): `Cargo.toml`,
-        `tauri.conf.json`, `package.json`. `Cargo.lock` is
-        regenerated automatically by `cargo build`; stage the diff.
-        Flag any partial version bump — a mismatch ships a binary
-        whose About dialog and updater manifest disagree.
+        Critical Rule #5 defines THREE version-source files that
+        must move together in one commit: `Cargo.toml`,
+        `tauri.conf.json`, `package.json`. `Cargo.lock` is not one
+        of the three — it is regenerated automatically by
+        `cargo build` and must simply be staged in the same commit
+        so the build stays reproducible. Flag any partial version
+        bump of the three (a mismatch ships a binary whose About
+        dialog and updater manifest disagree), and flag a version
+        bump that leaves `Cargo.lock` unstaged.
         Adding a new direct dependency: prefer a maintained,
         popular crate; call out anything unmaintained or with
         outstanding advisories (this repo has already shipped
@@ -183,10 +191,17 @@ reviews:
     enabled: true
     drafts: false
     auto_incremental_review: true
-    auto_pause_after_reviewed_commits: 0
+    # `0` disables auto-pause and re-reviews every push, which burns
+    # free-tier review quota fast on chatty branches. `1` pauses
+    # after the first review so subsequent commits require an
+    # explicit `@coderabbitai review` (or the next base-branch merge).
+    auto_pause_after_reviewed_commits: 1
+    # `ignore_title_keywords` uses case-insensitive SUBSTRING match,
+    # so bare `wip` matches `feat: add swipe gesture`. Use bracketed
+    # / punctuated forms only.
     ignore_title_keywords:
-      - "wip"
-      - "WIP"
+      - "[wip]"
+      - "wip:"
       - "[skip review]"
     base_branches:
       - "main"
