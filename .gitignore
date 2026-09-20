@@ -30,3 +30,6 @@ pnpm-workspace.yaml
 # Build artifacts
 /dist/
 /build/
+
+# Claude Code (local settings)
+.claude/
